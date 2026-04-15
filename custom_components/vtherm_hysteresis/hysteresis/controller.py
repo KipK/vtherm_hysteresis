@@ -76,6 +76,7 @@ class HysteresisController:
         self,
         target_temp: float | None,
         current_temp: float | None,
+        **_kwargs: object,
     ) -> float:
         """Apply the relay hysteresis law and return the resulting on_percent."""
         if target_temp is None or current_temp is None:
