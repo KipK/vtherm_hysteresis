@@ -13,7 +13,9 @@
         "title": "Parametres Hysteresis",
         "data": {
           "hysteresis_on": "Ecart de remise en chauffe",
-          "hysteresis_off": "Ecart de coupure chauffage"
+          "hysteresis_off": "Ecart de coupure chauffage",
+          "max_on_percent": "Puissance maximale en chauffe (0.0–1.0)",
+          "min_on_percent": "Puissance minimale en veille/refroidissement (0.0–1.0)"
         }
       },
       "thermostat": {
@@ -21,7 +23,9 @@
         "data": {
           "target_vtherm_unique_id": "Thermostat cible",
           "hysteresis_on": "Ecart de remise en chauffe",
-          "hysteresis_off": "Ecart de coupure chauffage"
+          "hysteresis_off": "Ecart de coupure chauffage",
+          "max_on_percent": "Puissance maximale en chauffe (0.0–1.0)",
+          "min_on_percent": "Puissance minimale en veille/refroidissement (0.0–1.0)"
         }
       }
     },
@@ -38,7 +42,9 @@
         "title": "Parametres Hysteresis",
         "data": {
           "hysteresis_on": "Ecart de remise en chauffe",
-          "hysteresis_off": "Ecart de coupure chauffage"
+          "hysteresis_off": "Ecart de coupure chauffage",
+          "max_on_percent": "Puissance maximale en chauffe (0.0–1.0)",
+          "min_on_percent": "Puissance minimale en veille/refroidissement (0.0–1.0)"
         }
       }
     }

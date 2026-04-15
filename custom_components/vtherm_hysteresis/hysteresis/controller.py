@@ -37,6 +37,11 @@ class HysteresisController:
         return self._max_on_percent if self._state.is_heating else self._min_on_percent
 
     @property
+    def calculated_on_percent(self) -> float:
+        """Alias expected by VT internals (safety manager, etc.)."""
+        return self.on_percent
+
+    @property
     def is_heating(self) -> bool:
         """Return the current relay state."""
         return self._state.is_heating
