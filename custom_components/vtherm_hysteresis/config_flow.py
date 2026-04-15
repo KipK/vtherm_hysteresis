@@ -13,6 +13,8 @@ from homeassistant.helpers import selector
 from .const import (
     CONF_HYSTERESIS_OFF,
     CONF_HYSTERESIS_ON,
+    CONF_MAX_ON_PERCENT,
+    CONF_MIN_ON_PERCENT,
     CONF_TARGET_VTHERM,
     DEFAULT_OPTIONS,
     DOMAIN,
@@ -41,6 +43,28 @@ def build_options_schema(defaults: dict[str, Any]) -> vol.Schema:
                 selector.NumberSelectorConfig(
                     min=0.0,
                     max=5.0,
+                    step=0.01,
+                    mode=selector.NumberSelectorMode.BOX,
+                )
+            ),
+            vol.Optional(
+                CONF_MAX_ON_PERCENT,
+                default=defaults[CONF_MAX_ON_PERCENT],
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=0.0,
+                    max=1.0,
+                    step=0.01,
+                    mode=selector.NumberSelectorMode.BOX,
+                )
+            ),
+            vol.Optional(
+                CONF_MIN_ON_PERCENT,
+                default=defaults[CONF_MIN_ON_PERCENT],
+            ): selector.NumberSelector(
+                selector.NumberSelectorConfig(
+                    min=0.0,
+                    max=1.0,
                     step=0.01,
                     mode=selector.NumberSelectorMode.BOX,
                 )

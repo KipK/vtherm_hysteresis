@@ -16,6 +16,18 @@ When the room temperature drops below `target - hysteresis_on`, the controller r
 
 When the room temperature rises above `target + hysteresis_off`, the controller requests stop.
 
+### Maximum heating power (`max_on_percent`)
+
+The maximum duty-cycle fraction sent to the cycle scheduler when heating is active. A value of `1.0` means 100 % (default). Reduce this for radiators with high thermal inertia to avoid overshooting the target temperature, or to limit valve opening in heating mode.
+
+Range: `0.0` – `1.0`. Default: `1.0`.
+
+### Minimum cooling power (`min_on_percent`)
+
+The duty-cycle fraction sent to the cycle scheduler when the controller is idle (not heating). A value of `0.0` means completely off (default). Set a non-zero value to keep a valve partially open in cooling or idle mode.
+
+Range: `0.0` – `1.0`. Default: `0.0`.
+
 ## Configuration modes
 
 The config flow supports two scopes:

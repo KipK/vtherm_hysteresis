@@ -20,17 +20,21 @@ class HysteresisController:
         self,
         hysteresis_on: float,
         hysteresis_off: float,
+        max_on_percent: float = 1.0,
+        min_on_percent: float = 0.0,
         state: HysteresisState | None = None,
     ) -> None:
         """Store the thresholds and initial relay state."""
         self._hysteresis_on = hysteresis_on
         self._hysteresis_off = hysteresis_off
+        self._max_on_percent = max_on_percent
+        self._min_on_percent = min_on_percent
         self._state = state or HysteresisState()
 
     @property
     def on_percent(self) -> float:
         """Return the duty request expected by the VT cycle scheduler."""
-        return 1.0 if self._state.is_heating else 0.0
+        return self._max_on_percent if self._state.is_heating else self._min_on_percent
 
     @property
     def is_heating(self) -> bool:

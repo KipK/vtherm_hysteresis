@@ -16,6 +16,18 @@ Quand la temperature de la piece descend sous `target - hysteresis_on`, le contr
 
 Quand la temperature de la piece depasse `target + hysteresis_off`, le controleur demande l'arret.
 
+### Puissance maximale en chauffe (`max_on_percent`)
+
+La fraction de cycle envoyee au scheduler quand la chauffe est active. La valeur `1.0` correspond a 100 % (defaut). Reduire cette valeur pour les radiateurs a forte inertie thermique afin d'eviter le depassement de consigne, ou pour limiter l'ouverture d'une vanne en mode chauffe.
+
+Plage : `0.0` – `1.0`. Defaut : `1.0`.
+
+### Puissance minimale en refroidissement (`min_on_percent`)
+
+La fraction de cycle envoyee au scheduler quand le controleur est inactif (pas de chauffe). La valeur `0.0` correspond a completement ferme (defaut). Definir une valeur non nulle permet de maintenir une vanne partiellement ouverte en mode refroidissement ou en veille.
+
+Plage : `0.0` – `1.0`. Defaut : `0.0`.
+
 ## Modes de configuration
 
 Le config flow supporte deux portees :
