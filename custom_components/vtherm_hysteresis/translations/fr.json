@@ -1,0 +1,46 @@
+{
+  "title": "Versatile Thermostat Hysteresis",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration Hysteresis",
+        "menu_options": {
+          "thermostat": "Configurer un thermostat",
+          "global": "Configurer les valeurs par defaut"
+        }
+      },
+      "global": {
+        "title": "Parametres Hysteresis",
+        "data": {
+          "hysteresis_on": "Ecart de remise en chauffe",
+          "hysteresis_off": "Ecart de coupure chauffage"
+        }
+      },
+      "thermostat": {
+        "title": "Hysteresis par thermostat",
+        "data": {
+          "target_vtherm_unique_id": "Thermostat cible",
+          "hysteresis_on": "Ecart de remise en chauffe",
+          "hysteresis_off": "Ecart de coupure chauffage"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Une seule configuration globale Hysteresis est autorisee."
+    },
+    "error": {
+      "invalid_entity": "L'entite climate selectionnee ne peut pas etre reliee a un identifiant unique VT."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Parametres Hysteresis",
+        "data": {
+          "hysteresis_on": "Ecart de remise en chauffe",
+          "hysteresis_off": "Ecart de coupure chauffage"
+        }
+      }
+    }
+  }
+}

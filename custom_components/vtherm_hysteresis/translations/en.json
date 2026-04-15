@@ -1,0 +1,46 @@
+{
+  "title": "Versatile Thermostat Hysteresis",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hysteresis configuration",
+        "menu_options": {
+          "thermostat": "Configure a thermostat",
+          "global": "Configure global defaults"
+        }
+      },
+      "global": {
+        "title": "Hysteresis defaults",
+        "data": {
+          "hysteresis_on": "Heating restart delta",
+          "hysteresis_off": "Heating stop delta"
+        }
+      },
+      "thermostat": {
+        "title": "Hysteresis per thermostat",
+        "data": {
+          "target_vtherm_unique_id": "Target thermostat",
+          "hysteresis_on": "Heating restart delta",
+          "hysteresis_off": "Heating stop delta"
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Only one Hysteresis global configuration is allowed."
+    },
+    "error": {
+      "invalid_entity": "The selected climate entity cannot be linked to a VT unique identifier."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hysteresis defaults",
+        "data": {
+          "hysteresis_on": "Heating restart delta",
+          "hysteresis_off": "Heating stop delta"
+        }
+      }
+    }
+  }
+}

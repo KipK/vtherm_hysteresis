@@ -1,0 +1,15 @@
+{
+  "domain": "vtherm_hysteresis",
+  "name": "Versatile Thermostat Hysteresis",
+  "description": "Hysteresis proportional algorithm plugin for Versatile Thermostat",
+  "version": "0.1.0",
+  "config_flow": true,
+  "dependencies": [
+    "versatile_thermostat"
+  ],
+  "requirements": [
+    "vtherm_api@git+https://github.com/KipK/vtherm_api.git@api_algo"
+  ],
+  "integration_type": "service",
+  "iot_class": "calculated"
+}

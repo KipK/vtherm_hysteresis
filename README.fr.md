@@ -1,0 +1,63 @@
+# Versatile Thermostat Hysteresis
+
+[Read the English version](README.md)
+
+<p align="center">
+  <img src="assets/brand/logo.png" alt="Logo Versatile Thermostat Hysteresis" width="300" />
+</p>
+
+<p align="center">
+  <strong>Integration externe de reference pour un algorithme Versatile Thermostat</strong>
+</p>
+
+Ce depot fournit un algorithme de chauffage a hysteresis simple, empaquete comme integration externe pour Versatile Thermostat.
+
+## Ce que montre ce depot
+
+- L'enregistrement d'un algorithme proportionnel externe via `vtherm_api`
+- Un packaging Home Assistant complet avec `manifest.json`, `config_flow.py`, traductions et metadonnees HACS
+- Des configurations globales et par thermostat
+- Un handler minimal qui implemente tout le contrat `InterfacePropAlgorithmHandler`
+- La persistance de l'etat de l'algorithme avec le stockage Home Assistant
+
+## Loi de regulation
+
+L'algorithme applique une hysteresis classique pour le chauffage :
+
+- la chauffe redemarre quand `current_temperature <= target_temperature - hysteresis_on`
+- la chauffe s'arrete quand `current_temperature >= target_temperature + hysteresis_off`
+- dans la bande, l'etat precedent est conserve
+
+Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = 0.0` ou `1.0`.
+
+## Installation
+
+### Via HACS
+
+1. Ajouter le depot dans HACS comme integration.
+2. Installer le depot.
+3. Redemarrer Home Assistant.
+4. Ajouter l'integration `Versatile Thermostat Hysteresis` depuis l'interface.
+5. Choisir une configuration globale ou une configuration specifique a un thermostat.
+
+### Installation manuelle
+
+1. Copier `custom_components/vtherm_hysteresis` dans le dossier `custom_components` de Home Assistant.
+2. Redemarrer Home Assistant.
+3. Ajouter l'integration depuis l'interface.
+
+## Structure du depot
+
+- `custom_components/vtherm_hysteresis/` : code de l'integration Home Assistant
+- `documentation/en/` : documentation utilisateur et technique en anglais
+- `documentation/fr/` : documentation utilisateur et technique en francais
+- `.github/workflows/` : exemples de validation, tests et release
+
+## Documentation
+
+- [Documentation utilisateur](documentation/fr/vtherm_hysteresis.md)
+- [Documentation technique](documentation/fr/technical_doc.md)
+
+## Licence
+
+Le proprietaire du depot doit definir les termes de licence appliques a ce scaffold.
