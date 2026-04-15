@@ -34,6 +34,8 @@ The result is then translated to the VT cycle scheduler as `on_percent = 0.0` or
 
 ### Via HACS
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=KipK&repository=vtherm_hysteresis&category=Integration)
+
 1. Add the repository to HACS as an integration.
 2. Install the repository.
 3. Restart Home Assistant.

@@ -34,6 +34,8 @@ Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = 0.0
 
 ### Via HACS
 
+[![Ouvrir votre instance Home Assistant et ouvrir un depot dans le Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=KipK&repository=vtherm_hysteresis&category=Integration)
+
 1. Ajouter le depot dans HACS comme integration.
 2. Installer le depot.
 3. Redemarrer Home Assistant.
