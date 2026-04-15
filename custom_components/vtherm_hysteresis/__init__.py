@@ -12,6 +12,7 @@ from vtherm_api.vtherm_api import VThermAPI
 
 from .const import (
     CONF_PROP_FUNCTION,
+    CONF_TARGET_VTHERM,
     DATA_FACTORY_REGISTERED,
     DOMAIN,
     PROP_FUNCTION_HYSTERESIS,
@@ -58,13 +59,36 @@ def _unregister_factory(hass: HomeAssistant) -> None:
     _ensure_domain_data(hass)[DATA_FACTORY_REGISTERED] = False
 
 
-async def _reload_hysteresis_vtherms(hass: HomeAssistant) -> None:
+async def _reload_hysteresis_vtherms(
+    hass: HomeAssistant,
+    source_entry: ConfigEntry | None = None,
+) -> None:
     """Reload VT entries that currently target the Hysteresis proportional function."""
-    reload_tasks = [
-        hass.config_entries.async_reload(entry.entry_id)
-        for entry in hass.config_entries.async_entries(VT_DOMAIN)
-        if entry.data.get(CONF_PROP_FUNCTION) == PROP_FUNCTION_HYSTERESIS
-    ]
+    target_unique_id = None
+    reload_global_defaults = False
+    if source_entry is not None:
+        target_unique_id = source_entry.data.get(CONF_TARGET_VTHERM)
+        reload_global_defaults = target_unique_id is None
+
+    per_thermostat_targets = {
+        entry.data.get(CONF_TARGET_VTHERM)
+        for entry in hass.config_entries.async_entries(DOMAIN)
+        if entry.data.get(CONF_TARGET_VTHERM)
+    }
+
+    reload_tasks = []
+    for entry in hass.config_entries.async_entries(VT_DOMAIN):
+        if entry.data.get(CONF_PROP_FUNCTION) != PROP_FUNCTION_HYSTERESIS:
+            continue
+
+        if target_unique_id is not None:
+            if entry.unique_id != target_unique_id:
+                continue
+        elif reload_global_defaults and entry.unique_id in per_thermostat_targets:
+            continue
+
+        reload_tasks.append(hass.config_entries.async_reload(entry.entry_id))
+
     if reload_tasks:
         await asyncio.gather(*reload_tasks)
 
@@ -81,11 +105,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     _ensure_domain_data(hass)[entry.entry_id] = entry.entry_id
     _register_factory(hass)
 
+    entry.async_on_unload(entry.add_update_listener(_async_update_options))
+
     # During initial startup VT restores its own entities after HA starts.
     # Reloading them here would be redundant and could disturb state restore.
     if hass.state == CoreState.running:
         await _reload_hysteresis_vtherms(hass)
     return True
+
+
+async def _async_update_options(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload VT thermostats when options are changed so the new parameters apply."""
+    await _reload_hysteresis_vtherms(hass, source_entry=entry)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

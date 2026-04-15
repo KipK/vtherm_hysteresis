@@ -3,10 +3,6 @@
 [Read the English version](README.md)
 
 <p align="center">
-  <img src="assets/brand/logo.png" alt="Logo Versatile Thermostat Hysteresis" width="300" />
-</p>
-
-<p align="center">
   <strong>Integration externe de reference pour un algorithme Versatile Thermostat</strong>
 </p>
 
