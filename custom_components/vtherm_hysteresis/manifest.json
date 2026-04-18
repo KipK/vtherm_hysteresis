@@ -8,11 +8,13 @@
     "versatile_thermostat"
   ],
   "requirements": [
-    "vtherm_api@git+https://github.com/KipK/vtherm_api.git@api_algo"
+    "vtherm_api@git+https://github.com/jmcollin78/vtherm_api.git@api_algo"
   ],
   "integration_type": "service",
   "iot_class": "calculated",
-  "codeowners": ["@KipK"],
+  "codeowners": [
+    "@KipK"
+  ],
   "documentation": "https://github.com/KipK/vtherm_hysteresis",
   "issue_tracker": "https://github.com/KipK/vtherm_hysteresis/issues"
 }
