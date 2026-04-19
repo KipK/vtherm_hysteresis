@@ -85,13 +85,21 @@ def build_user_schema(defaults: dict[str, Any]) -> vol.Schema:
 
 
 class HysteresisConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Create a singleton Hysteresis plugin entry."""
+    """Manage Hysteresis plugin config entries."""
 
     VERSION = 1
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
-        """Show the configuration scope menu."""
+        """Create default plugin settings on first install."""
         del user_input
+        if not self._async_current_entries():
+            await self.async_set_unique_id(DOMAIN)
+            self._abort_if_unique_id_configured()
+            return self.async_create_entry(
+                title="Hysteresis defaults",
+                data=dict(DEFAULT_OPTIONS),
+            )
+
         return self.async_show_menu(
             step_id="user",
             menu_options=["thermostat", "global"],
