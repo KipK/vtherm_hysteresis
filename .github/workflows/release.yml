@@ -16,8 +16,8 @@ jobs:
 
       - name: Create ZIP
         run: |
-          cd custom_components
-          zip -r ../vtherm_hysteresis.zip vtherm_hysteresis/
+          cd custom_components/vtherm_hysteresis
+          zip -r ../../vtherm_hysteresis.zip .
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
