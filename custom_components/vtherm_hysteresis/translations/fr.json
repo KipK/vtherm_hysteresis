@@ -2,13 +2,6 @@
   "title": "Versatile Thermostat Hysteresis",
   "config": {
     "step": {
-      "user": {
-        "title": "Configuration Hysteresis",
-        "menu_options": {
-          "thermostat": "Configurer un thermostat",
-          "global": "Configurer les valeurs par defaut"
-        }
-      },
       "global": {
         "title": "Parametres Hysteresis",
         "data": {
