@@ -111,7 +111,7 @@ class HysteresisHandler:
         hysteresis example keeps it lightweight and simply aligns the handler
         with the current HVAC state.
         """
-        await self.on_state_changed()
+        await self.on_state_changed(True)
 
     def remove(self) -> None:
         """Release resources and persist the current controller state."""
@@ -180,11 +180,12 @@ class HysteresisHandler:
         if self._store is not None:
             thermostat.hass.async_create_task(self._store.async_save(controller.save_state()))
 
-    async def on_state_changed(self) -> None:
+    async def on_state_changed(self, changed: bool) -> None:
         """React to thermostat state changes.
 
         SmartPI uses this for timers and learning state. The hysteresis example
         documents the same hook with a single behavior: request a fresh control
         iteration whenever VT changes a relevant state.
         """
+        del changed
         await self._thermostat.async_control_heating(force=True)
