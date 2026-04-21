@@ -13,3 +13,7 @@
 ## [0.1.4]
 
 switch to official vtherm_api package
+
+## [0.1.5]
+
+Align prop handler state change hook with changed flag API
