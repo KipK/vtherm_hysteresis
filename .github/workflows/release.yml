@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: "Set version number from trigger's tag"
+        run: |
+          yq -i -o json '.version="${{ github.ref_name }}"' \
+          "${{ github.workspace }}/custom_components/vtherm_hysteresis/manifest.json"
+
       - name: Create ZIP
         run: |
           cd custom_components/vtherm_hysteresis
