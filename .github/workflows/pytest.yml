@@ -15,6 +15,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Checkout Versatile Thermostat dependency
+        uses: actions/checkout@v4
+        with:
+          repository: KipK/versatile_thermostat
+          path: versatile_thermostat
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -26,4 +32,6 @@ jobs:
           pip install pytest pytest-asyncio pytest-homeassistant-custom-component coverage homeassistant vtherm-api
 
       - name: Run Pytest
+        env:
+          PYTHONPATH: ${{ github.workspace }}/versatile_thermostat:${{ github.workspace }}
         run: pytest tests/
