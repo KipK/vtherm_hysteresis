@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout Versatile Thermostat dependency
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
-          repository: KipK/versatile_thermostat
+          repository: jmcollin78/versatile_thermostat
           path: versatile_thermostat
 
       - name: Set up Python
