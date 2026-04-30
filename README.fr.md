@@ -35,7 +35,7 @@ Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = max
 1. Ajouter le depot dans HACS comme integration.
 2. Installer le depot.
 3. Redemarrer Home Assistant.
-4. Ajouter l'integration `Versatile Thermostat Hysteresis` depuis l'interface.
+4. Ajouter l'integration `Versatile Thermostat Hysteresis` depuis le menu Paramètres / Appareils et Services / Ajouter une intégration.
 5. Choisir une configuration globale ou une configuration specifique a un thermostat.
 
 ### Installation manuelle

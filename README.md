@@ -35,7 +35,7 @@ The result is then translated to the VT cycle scheduler as `on_percent = max_on_
 1. Add the repository to HACS as an integration.
 2. Install the repository.
 3. Restart Home Assistant.
-4. Add the `Versatile Thermostat Hysteresis` integration from the UI.
+4. Add the `Versatile Thermostat Hysteresis` integration from the Settings / Devices & Services / Add an Integration
 5. Select either global defaults or a thermostat-specific configuration.
 
 ### Manual installation
