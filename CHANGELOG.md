@@ -21,3 +21,11 @@ Align prop handler state change hook with changed flag API
 ## [0.1.6]
 
 remove vtherm_api dependency ( use VT installed one )
+
+## [0.2.0]
+
+feat: bind hysteresis plugin config entry to VTherm device
+
+Add device registry binding so VTherm thermostats using the hysteresis
+algorithm appear under the integration panel, grouped by their applied
+config entry (global defaults or dedicated).
