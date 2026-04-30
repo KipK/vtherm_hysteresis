@@ -5,6 +5,9 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
+from homeassistant.components.climate import DOMAIN as CLIMATE_DOMAIN
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
 from homeassistant.util import slugify
 
@@ -25,6 +28,7 @@ if TYPE_CHECKING:
     from vtherm_api.interfaces import InterfaceCycleScheduler, InterfaceThermostatRuntime
 
 _LOGGER = logging.getLogger(__name__)
+VT_DOMAIN = "versatile_thermostat"
 
 
 class HysteresisHandler:
@@ -38,6 +42,7 @@ class HysteresisHandler:
         self._should_publish_intermediate = True
         self._last_committed_on_percent = 0.0
         self._scheduler: InterfaceCycleScheduler | None = None
+        self._applied_config_entry_id: str | None = None
 
     def init_algorithm(self) -> None:
         """Create the algorithm instance and prepare persistence.
@@ -46,7 +51,10 @@ class HysteresisHandler:
         read runtime configuration here and instantiate its own controller.
         """
         thermostat = self._thermostat
-        config = self._get_effective_config()
+        config, entry_to_apply = self._resolve_effective_config()
+        self._applied_config_entry_id = (
+            entry_to_apply.entry_id if entry_to_apply is not None else None
+        )
 
         safe_name = slugify(thermostat.name)
         self._store = Store(thermostat.hass, STORAGE_VERSION, STORAGE_KEY.format(safe_name))
@@ -58,12 +66,8 @@ class HysteresisHandler:
         )
         thermostat.prop_algorithm = self._controller
 
-    def _get_effective_config(self) -> dict[str, float]:
-        """Merge thermostat defaults with plugin entries.
-
-        The same strategy as SmartPI is kept here so this repository can act as
-        a reference implementation for developers building another algorithm.
-        """
+    def _resolve_effective_config(self) -> tuple[dict[str, float], object]:
+        """Return the merged configuration and the applied config entry."""
         thermostat = self._thermostat
         config: dict[str, float] = dict(DEFAULT_OPTIONS)
 
@@ -85,7 +89,51 @@ class HysteresisHandler:
             config.update(entry_to_apply.data)
             config.update(entry_to_apply.options)
 
-        return config
+        return config, entry_to_apply
+
+    def _get_target_device_id(self) -> str | None:
+        """Return the HA device id for the target thermostat."""
+        t = self._thermostat
+        registry = er.async_get(t.hass)
+
+        entity_id = getattr(t, "entity_id", None)
+        if entity_id:
+            reg_entry = registry.async_get(entity_id)
+            if reg_entry is not None and reg_entry.device_id:
+                return reg_entry.device_id
+
+        entity_id = registry.async_get_entity_id(CLIMATE_DOMAIN, VT_DOMAIN, t.unique_id)
+        if not entity_id:
+            return None
+
+        reg_entry = registry.async_get(entity_id)
+        if reg_entry is not None and reg_entry.device_id:
+            return reg_entry.device_id
+        return None
+
+    def _bind_config_entry_to_device(self) -> None:
+        """Link the applied config entry to the target thermostat device."""
+        if self._applied_config_entry_id is None:
+            return
+        device_id = self._get_target_device_id()
+        if not device_id:
+            return
+        dr.async_get(self._thermostat.hass).async_update_device(
+            device_id,
+            add_config_entry_id=self._applied_config_entry_id,
+        )
+
+    def _unbind_config_entry_from_device(self) -> None:
+        """Unlink the applied config entry from the target thermostat device."""
+        if self._applied_config_entry_id is None:
+            return
+        device_id = self._get_target_device_id()
+        if not device_id:
+            return
+        dr.async_get(self._thermostat.hass).async_update_device(
+            device_id,
+            remove_config_entry_id=self._applied_config_entry_id,
+        )
 
     async def async_added_to_hass(self) -> None:
         """Restore persistent algorithm state.
@@ -104,6 +152,8 @@ class HysteresisHandler:
         except Exception as err:  # pragma: no cover - defensive logging path
             _LOGGER.error("%s - Failed to load Hysteresis state: %s", self._thermostat, err)
 
+        self._bind_config_entry_to_device()
+
     async def async_startup(self) -> None:
         """Run startup actions after the thermostat is ready.
 
@@ -115,6 +165,7 @@ class HysteresisHandler:
 
     def remove(self) -> None:
         """Release resources and persist the current controller state."""
+        self._unbind_config_entry_from_device()
         thermostat = self._thermostat
         if self._store is not None and self._controller is not None:
             thermostat.hass.async_create_task(self._store.async_save(self._controller.save_state()))
