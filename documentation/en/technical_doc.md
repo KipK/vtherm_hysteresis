@@ -27,7 +27,9 @@ Each method is kept in the scaffold even when the hysteresis use case does not n
 
 ## Scheduler interaction
 
-The controller does not switch hardware directly. It computes an `on_percent` and forwards that request to the VT cycle scheduler. For a relay hysteresis controller the command is binary:
+The controller does not switch hardware directly. It computes an `on_percent` and forwards that request to the VT cycle scheduler:
 
-- `1.0` means heating requested
-- `0.0` means heating stopped
+- `max_on_percent` is sent when heating is active (default `1.0`)
+- `min_on_percent` is sent when the controller is idle (default `0.0`)
+
+Both values are configurable per thermostat so that users can, for example, cap heating power at 80 % or keep a valve slightly open when idle.

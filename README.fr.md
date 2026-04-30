@@ -24,7 +24,7 @@ L'algorithme applique une hysteresis classique pour le chauffage :
 - la chauffe s'arrete quand `current_temperature >= target_temperature + hysteresis_off`
 - dans la bande, l'etat precedent est conserve
 
-Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = 0.0` ou `1.0`.
+Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = max_on_percent` (chauffe active) ou `on_percent = min_on_percent` (inactif). Les deux valeurs sont configurables ; les valeurs par defaut sont respectivement `1.0` et `0.0`.
 
 ## Installation
 

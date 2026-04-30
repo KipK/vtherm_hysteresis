@@ -24,7 +24,7 @@ The algorithm applies a classic relay hysteresis for heating:
 - heating stops when `current_temperature >= target_temperature + hysteresis_off`
 - inside the band, the previous relay state is kept
 
-The result is then translated to the VT cycle scheduler as `on_percent = 0.0` or `1.0`.
+The result is then translated to the VT cycle scheduler as `on_percent = max_on_percent` (heating active) or `on_percent = min_on_percent` (idle). Both values are configurable; defaults are `1.0` and `0.0` respectively.
 
 ## Installation
 

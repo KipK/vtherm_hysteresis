@@ -27,7 +27,9 @@ Chaque methode est conservee dans le scaffold meme quand le cas hysteresis ne de
 
 ## Interaction avec le scheduler
 
-Le controleur ne commute pas le materiel directement. Il calcule un `on_percent` et transmet cette consigne au cycle scheduler VT. Pour un controleur a hysteresis, la commande est binaire :
+Le controleur ne commute pas le materiel directement. Il calcule un `on_percent` et transmet cette consigne au cycle scheduler VT :
 
-- `1.0` signifie chauffe demandee
-- `0.0` signifie chauffe arretee
+- `max_on_percent` est envoye quand la chauffe est active (defaut `1.0`)
+- `min_on_percent` est envoye quand le controleur est inactif (defaut `0.0`)
+
+Les deux valeurs sont configurables par thermostat, permettant par exemple de plafonner la puissance de chauffe a 80 % ou de maintenir une vanne legerement ouverte en veille.
