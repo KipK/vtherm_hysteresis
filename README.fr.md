@@ -38,7 +38,8 @@ Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = max
 2. Installer le depot.
 3. Redemarrer Home Assistant.
 4. Ajouter l'integration `Versatile Thermostat Hysteresis` depuis le menu Paramètres / Appareils et Services / Ajouter une intégration.
-5. Choisir une configuration globale ou une configuration specifique a un thermostat.
+5. Selectionner l'algorithme Hysteresis dans les parametres du sous-jacent du VTherm dans la configuration Versatile Thermostat.
+6. Choisir une configuration globale ou une configuration specifique a un thermostat dabs la page de l'integration vtherm-hysteresis
 
 ### Installation manuelle
 
