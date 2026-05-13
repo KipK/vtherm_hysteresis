@@ -8,6 +8,9 @@
 
 This repository provides a simple hysteresis-based heating algorithm packaged as an external integration for Versatile Thermostat.
 
+Plugins algorithm are intended to replace the onboard TPI. They so are limited to over_switch, over_valve and climate with valve control underlyings.
+
+
 ## What this repository demonstrates
 
 - Registration of an external proportional algorithm through `vtherm_api`
