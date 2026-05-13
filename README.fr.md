@@ -8,6 +8,8 @@
 
 Ce depot fournit un algorithme de chauffage a hysteresis simple, empaquete comme integration externe pour Versatile Thermostat.
 
+Les plugins d'algorithmes ont pour vocation de remplacer le TPI embarqué. Ils sont donc limités aux sous-jacents over_valve, over_valve, et over_climate avec controle de la valve.
+
 ## Ce que montre ce depot
 
 - L'enregistrement d'un algorithme proportionnel externe via `vtherm_api`
