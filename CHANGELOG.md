@@ -29,3 +29,11 @@ feat: bind hysteresis plugin config entry to VTherm device
 Add device registry binding so VTherm thermostats using the hysteresis
 algorithm appear under the integration panel, grouped by their applied
 config entry (global defaults or dedicated).
+
+## [0.3.0]
+
+feat: Add symmetric heat/cool control
+- Use a neutral active relay state
+- Support cool-mode activation/deactivation thresholds
+- Expose hysteresis diagnostics attributes
+- Update tests, translations, and documentation
