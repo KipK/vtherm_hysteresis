@@ -22,6 +22,7 @@ Le handler implemente les methodes suivantes de `vtherm_api.interfaces.Interface
 - `on_state_changed`
 - `on_scheduler_ready`
 - `should_publish_intermediate`
+- `update_attributes`
 
 Chaque methode est conservee dans le scaffold meme quand le cas hysteresis ne demande pas de logique complexe, afin de montrer ou se place chaque point d'extension.
 
@@ -29,7 +30,11 @@ Chaque methode est conservee dans le scaffold meme quand le cas hysteresis ne de
 
 Le controleur ne commute pas le materiel directement. Il calcule un `on_percent` et transmet cette consigne au cycle scheduler VT :
 
-- `max_on_percent` est envoye quand la chauffe est active (defaut `1.0`)
-- `min_on_percent` est envoye quand le controleur est inactif (defaut `0.0`)
+- `max_on_percent` est envoye quand la regulation heat ou cool est active (defaut `1.0`)
+- `min_on_percent` est envoye quand la regulation heat ou cool est inactive (defaut `0.0`)
 
-Les deux valeurs sont configurables par thermostat, permettant par exemple de plafonner la puissance de chauffe a 80 % ou de maintenir une vanne legerement ouverte en veille.
+Les deux valeurs sont configurables par thermostat, permettant de plafonner la puissance active a 80 % ou de maintenir une vanne legerement ouverte quand la regulation est inactive.
+
+## Diagnostics publies
+
+Le handler publie un payload de diagnostic compact dans `specific_states.hysteresis` avec l'etat du relais, le mode HVAC normalise, le `on_percent` demande, la derniere raison de decision et les seuils utilises par le dernier calcul.

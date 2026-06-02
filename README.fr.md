@@ -6,7 +6,7 @@
   <strong>Integration externe de reference pour un algorithme Versatile Thermostat</strong>
 </p>
 
-Ce depot fournit un algorithme de chauffage a hysteresis simple, empaquete comme integration externe pour Versatile Thermostat.
+Ce depot fournit un algorithme de chauffage et refroidissement a hysteresis simple, empaquete comme integration externe pour Versatile Thermostat.
 
 Les plugins d'algorithmes ont pour vocation de remplacer le TPI embarqué. Ils sont donc limités aux sous-jacents over_valve, over_valve, et over_climate avec controle de la valve.
 
@@ -20,13 +20,15 @@ Les plugins d'algorithmes ont pour vocation de remplacer le TPI embarqué. Ils s
 
 ## Loi de regulation
 
-L'algorithme applique une hysteresis classique pour le chauffage :
+L'algorithme applique une hysteresis classique selon le mode HVAC actif :
 
-- la chauffe redemarre quand `current_temperature <= target_temperature - hysteresis_on`
-- la chauffe s'arrete quand `current_temperature >= target_temperature + hysteresis_off`
+- en mode heat, la regulation s'active quand `current_temperature <= target_temperature - hysteresis_on`
+- en mode heat, la regulation se desactive quand `current_temperature >= target_temperature + hysteresis_off`
+- en mode cool, la regulation s'active quand `current_temperature >= target_temperature + hysteresis_on`
+- en mode cool, la regulation se desactive quand `current_temperature <= target_temperature - hysteresis_off`
 - dans la bande, l'etat precedent est conserve
 
-Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = max_on_percent` (chauffe active) ou `on_percent = min_on_percent` (inactif). Les deux valeurs sont configurables ; les valeurs par defaut sont respectivement `1.0` et `0.0`.
+Le resultat est ensuite transmis au scheduler VT sous la forme `on_percent = max_on_percent` (regulation active) ou `on_percent = min_on_percent` (regulation inactive). Les deux valeurs sont configurables ; les valeurs par defaut sont respectivement `1.0` et `0.0`.
 
 ## Installation
 

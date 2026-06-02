@@ -6,7 +6,7 @@
   <strong>Reference external algorithm integration for Versatile Thermostat</strong>
 </p>
 
-This repository provides a simple hysteresis-based heating algorithm packaged as an external integration for Versatile Thermostat.
+This repository provides a simple hysteresis-based heating and cooling algorithm packaged as an external integration for Versatile Thermostat.
 
 Plugins algorithm are intended to replace the onboard TPI. They so are limited to over_switch, over_valve and climate with valve control underlyings.
 
@@ -21,13 +21,15 @@ Plugins algorithm are intended to replace the onboard TPI. They so are limited t
 
 ## Control law
 
-The algorithm applies a classic relay hysteresis for heating:
+The algorithm applies a classic relay hysteresis according to the active HVAC mode:
 
-- heating starts when `current_temperature <= target_temperature - hysteresis_on`
-- heating stops when `current_temperature >= target_temperature + hysteresis_off`
+- in heat mode, regulation activates when `current_temperature <= target_temperature - hysteresis_on`
+- in heat mode, regulation deactivates when `current_temperature >= target_temperature + hysteresis_off`
+- in cool mode, regulation activates when `current_temperature >= target_temperature + hysteresis_on`
+- in cool mode, regulation deactivates when `current_temperature <= target_temperature - hysteresis_off`
 - inside the band, the previous relay state is kept
 
-The result is then translated to the VT cycle scheduler as `on_percent = max_on_percent` (heating active) or `on_percent = min_on_percent` (idle). Both values are configurable; defaults are `1.0` and `0.0` respectively.
+The result is then translated to the VT cycle scheduler as `on_percent = max_on_percent` (active regulation) or `on_percent = min_on_percent` (inactive regulation). Both values are configurable; defaults are `1.0` and `0.0` respectively.
 
 ## Installation
 

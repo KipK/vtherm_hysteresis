@@ -1,4 +1,4 @@
-"""Discrete heating hysteresis controller used by the plugin handler."""
+"""Discrete hysteresis controller used by the plugin handler."""
 
 from __future__ import annotations
 
@@ -9,8 +9,23 @@ from dataclasses import dataclass
 class HysteresisState:
     """Persisted state for the hysteresis controller."""
 
-    is_heating: bool = False
+    is_active: bool = False
+    hvac_mode: str | None = None
     last_reason: str = "idle"
+    activation_threshold: float | None = None
+    deactivation_threshold: float | None = None
+
+
+def normalize_hvac_mode(hvac_mode: object) -> str | None:
+    """Return a normalized HVAC mode name."""
+    value = str(hvac_mode).lower()
+    if value.endswith("heat"):
+        return "heat"
+    if value.endswith("cool"):
+        return "cool"
+    if value.endswith("off"):
+        return "off"
+    return None
 
 
 class HysteresisController:
@@ -34,7 +49,7 @@ class HysteresisController:
     @property
     def on_percent(self) -> float:
         """Return the duty request expected by the VT cycle scheduler."""
-        return self._max_on_percent if self._state.is_heating else self._min_on_percent
+        return self._max_on_percent if self._state.is_active else self._min_on_percent
 
     @property
     def calculated_on_percent(self) -> float:
@@ -42,18 +57,18 @@ class HysteresisController:
         return self.on_percent
 
     @property
-    def is_heating(self) -> bool:
+    def is_active(self) -> bool:
         """Return the current relay state."""
-        return self._state.is_heating
+        return self._state.is_active
 
     @property
     def hysteresis_on(self) -> float:
-        """Return the lower threshold distance used to start heating."""
+        """Return the threshold distance used to activate regulation."""
         return self._hysteresis_on
 
     @property
     def hysteresis_off(self) -> float:
-        """Return the upper threshold distance used to stop heating."""
+        """Return the threshold distance used to deactivate regulation."""
         return self._hysteresis_off
 
     @property
@@ -61,14 +76,33 @@ class HysteresisController:
         """Return a short explanation of the last state decision."""
         return self._state.last_reason
 
+    def get_diagnostics(self) -> dict[str, object]:
+        """Return the diagnostics payload exposed on the thermostat."""
+        return {
+            "is_active": self._state.is_active,
+            "hvac_mode": self._state.hvac_mode,
+            "on_percent": self.on_percent,
+            "last_reason": self._state.last_reason,
+            "activation_threshold": self._state.activation_threshold,
+            "deactivation_threshold": self._state.deactivation_threshold,
+            "hysteresis_on": self._hysteresis_on,
+            "hysteresis_off": self._hysteresis_off,
+            "max_on_percent": self._max_on_percent,
+            "min_on_percent": self._min_on_percent,
+        }
+
     def restore_state(self, data: dict[str, object] | None) -> None:
         """Restore the persisted relay state."""
         if not data:
             return
 
-        is_heating = data.get("is_heating")
-        if isinstance(is_heating, bool):
-            self._state.is_heating = is_heating
+        is_active = data.get("is_active")
+        if isinstance(is_active, bool):
+            self._state.is_active = is_active
+
+        hvac_mode = data.get("hvac_mode")
+        if isinstance(hvac_mode, str):
+            self._state.hvac_mode = normalize_hvac_mode(hvac_mode)
 
         last_reason = data.get("last_reason")
         if isinstance(last_reason, str):
@@ -77,7 +111,8 @@ class HysteresisController:
     def save_state(self) -> dict[str, object]:
         """Serialize the relay state for Home Assistant storage."""
         return {
-            "is_heating": self._state.is_heating,
+            "is_active": self._state.is_active,
+            "hvac_mode": self._state.hvac_mode,
             "last_reason": self._state.last_reason,
         }
 
@@ -86,23 +121,57 @@ class HysteresisController:
         target_temp: float | None,
         current_temp: float | None,
         *_args: object,
+        hvac_mode: object = None,
         **_kwargs: object,
     ) -> float:
         """Apply the relay hysteresis law and return the resulting on_percent."""
+        if hvac_mode is None and len(_args) >= 3:
+            hvac_mode = _args[2]
+
+        mode = normalize_hvac_mode(hvac_mode)
+        self._state.hvac_mode = mode
+        self._state.activation_threshold = None
+        self._state.deactivation_threshold = None
+
+        if mode == "off":
+            self._state.is_active = False
+            self._state.last_reason = "hvac_off"
+            return self.on_percent
+
+        if mode not in ("heat", "cool"):
+            self._state.is_active = False
+            self._state.last_reason = "unsupported_hvac_mode"
+            return self.on_percent
+
         if target_temp is None or current_temp is None:
-            self._state.is_heating = False
+            self._state.is_active = False
             self._state.last_reason = "missing_temperature"
             return self.on_percent
 
-        turn_on_threshold = target_temp - self._hysteresis_on
-        turn_off_threshold = target_temp + self._hysteresis_off
+        if mode == "heat":
+            activation_threshold = target_temp - self._hysteresis_on
+            deactivation_threshold = target_temp + self._hysteresis_off
+            should_activate = current_temp <= activation_threshold
+            should_deactivate = current_temp >= deactivation_threshold
+            active_reason = "below_activation_threshold"
+            inactive_reason = "above_deactivation_threshold"
+        else:
+            activation_threshold = target_temp + self._hysteresis_on
+            deactivation_threshold = target_temp - self._hysteresis_off
+            should_activate = current_temp >= activation_threshold
+            should_deactivate = current_temp <= deactivation_threshold
+            active_reason = "above_activation_threshold"
+            inactive_reason = "below_deactivation_threshold"
 
-        if current_temp <= turn_on_threshold:
-            self._state.is_heating = True
-            self._state.last_reason = "below_on_threshold"
-        elif current_temp >= turn_off_threshold:
-            self._state.is_heating = False
-            self._state.last_reason = "above_off_threshold"
+        self._state.activation_threshold = activation_threshold
+        self._state.deactivation_threshold = deactivation_threshold
+
+        if should_activate:
+            self._state.is_active = True
+            self._state.last_reason = active_reason
+        elif should_deactivate:
+            self._state.is_active = False
+            self._state.last_reason = inactive_reason
         else:
             self._state.last_reason = "hold_in_band"
 

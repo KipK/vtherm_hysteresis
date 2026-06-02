@@ -22,7 +22,7 @@ from .const import (
     STORAGE_KEY,
     STORAGE_VERSION,
 )
-from .hysteresis.controller import HysteresisController
+from .hysteresis.controller import HysteresisController, normalize_hvac_mode
 
 if TYPE_CHECKING:
     from vtherm_api.interfaces import InterfaceCycleScheduler, InterfaceThermostatRuntime
@@ -186,6 +186,21 @@ class HysteresisHandler:
         """Return True when VT may publish the current intermediate state."""
         return self._should_publish_intermediate
 
+    def update_attributes(self) -> None:
+        """Expose Hysteresis diagnostics on the thermostat."""
+        if self._controller is None:
+            return
+
+        attributes = getattr(self._thermostat, "_attr_extra_state_attributes", None)
+        if not isinstance(attributes, dict):
+            return
+
+        specific_states = attributes.get("specific_states")
+        if not isinstance(specific_states, dict):
+            return
+
+        specific_states["hysteresis"] = self._controller.get_diagnostics()
+
     async def control_heating(self, timestamp=None, force: bool = False) -> None:
         """Execute one control iteration.
 
@@ -201,8 +216,12 @@ class HysteresisHandler:
 
         previous_on_percent = controller.on_percent
 
-        if str(thermostat.vtherm_hvac_mode).lower() == "off":
-            controller.restore_state({"is_heating": False, "last_reason": "hvac_off"})
+        if normalize_hvac_mode(thermostat.vtherm_hvac_mode) == "off":
+            controller.calculate(
+                target_temp=thermostat.target_temperature,
+                current_temp=thermostat.current_temperature,
+                hvac_mode=thermostat.vtherm_hvac_mode,
+            )
             self._should_publish_intermediate = previous_on_percent != 0.0
 
             if thermostat.is_device_active:
@@ -211,6 +230,7 @@ class HysteresisHandler:
             controller.calculate(
                 target_temp=thermostat.target_temperature,
                 current_temp=thermostat.current_temperature,
+                hvac_mode=thermostat.vtherm_hvac_mode,
             )
             self._should_publish_intermediate = (
                 force or abs(controller.on_percent - previous_on_percent) > 0.001

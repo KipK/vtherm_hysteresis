@@ -2,31 +2,50 @@
 
 ## Objectif
 
-Cette integration expose un controleur de chauffage a hysteresis simple a Versatile Thermostat via l'API d'algorithmes externes.
+Cette integration expose un controleur de chauffage et refroidissement a hysteresis simple a Versatile Thermostat via l'API d'algorithmes externes.
 
 Elle est volontairement simple et sert de reference pour les developpeurs qui veulent brancher un autre algorithme dans VT.
 
 ## Parametres
 
-### Ecart de remise en chauffe
+### Ecart d'activation
 
-Quand la temperature de la piece descend sous `target - hysteresis_on`, le controleur demande la chauffe.
+En mode heat, le controleur demande une regulation active quand la temperature de la piece descend sous `target - hysteresis_on`.
 
-### Ecart de coupure chauffage
+En mode cool, le controleur demande une regulation active quand la temperature de la piece depasse `target + hysteresis_on`.
 
-Quand la temperature de la piece depasse `target + hysteresis_off`, le controleur demande l'arret.
+### Ecart de desactivation
 
-### Puissance maximale en chauffe (`max_on_percent`)
+En mode heat, le controleur demande une regulation inactive quand la temperature de la piece depasse `target + hysteresis_off`.
 
-La fraction de cycle envoyee au scheduler quand la chauffe est active. La valeur `1.0` correspond a 100 % (defaut). Reduire cette valeur pour les radiateurs a forte inertie thermique afin d'eviter le depassement de consigne, ou pour limiter l'ouverture d'une vanne en mode chauffe.
+En mode cool, le controleur demande une regulation inactive quand la temperature de la piece descend sous `target - hysteresis_off`.
+
+### Puissance active (`max_on_percent`)
+
+La fraction de cycle envoyee au scheduler quand la regulation est active. La valeur `1.0` correspond a 100 % (defaut). Reduire cette valeur permet de plafonner la commande active envoyee au sous-jacent.
 
 Plage : `0.0` – `1.0`. Defaut : `1.0`.
 
-### Puissance minimale en refroidissement (`min_on_percent`)
+### Puissance inactive (`min_on_percent`)
 
-La fraction de cycle envoyee au scheduler quand le controleur est inactif (pas de chauffe). La valeur `0.0` correspond a completement ferme (defaut). Definir une valeur non nulle permet de maintenir une vanne partiellement ouverte en mode refroidissement ou en veille.
+La fraction de cycle envoyee au scheduler quand la regulation est inactive. La valeur `0.0` correspond a completement ferme (defaut). Definir une valeur non nulle permet de maintenir une vanne partiellement ouverte quand le relais est inactif.
 
 Plage : `0.0` – `1.0`. Defaut : `0.0`.
+
+## Attributs de suivi
+
+Le controleur expose sa derniere decision dans `specific_states.hysteresis` :
+
+- `is_active`
+- `hvac_mode`
+- `on_percent`
+- `last_reason`
+- `activation_threshold`
+- `deactivation_threshold`
+- `hysteresis_on`
+- `hysteresis_off`
+- `max_on_percent`
+- `min_on_percent`
 
 ## Modes de configuration
 

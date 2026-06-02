@@ -5,20 +5,20 @@
       "global": {
         "title": "Hysteresis defaults",
         "data": {
-          "hysteresis_on": "Heating restart delta",
-          "hysteresis_off": "Heating stop delta",
-          "max_on_percent": "Maximum heating power (0.0–1.0)",
-          "min_on_percent": "Minimum idle/cooling power (0.0–1.0)"
+          "hysteresis_on": "Activation delta",
+          "hysteresis_off": "Deactivation delta",
+          "max_on_percent": "Active power (0.0–1.0)",
+          "min_on_percent": "Inactive power (0.0–1.0)"
         }
       },
       "thermostat": {
         "title": "Hysteresis per thermostat",
         "data": {
           "target_vtherm_unique_id": "Target thermostat",
-          "hysteresis_on": "Heating restart delta",
-          "hysteresis_off": "Heating stop delta",
-          "max_on_percent": "Maximum heating power (0.0–1.0)",
-          "min_on_percent": "Minimum idle/cooling power (0.0–1.0)"
+          "hysteresis_on": "Activation delta",
+          "hysteresis_off": "Deactivation delta",
+          "max_on_percent": "Active power (0.0–1.0)",
+          "min_on_percent": "Inactive power (0.0–1.0)"
         }
       }
     },
@@ -34,10 +34,10 @@
       "init": {
         "title": "Hysteresis defaults",
         "data": {
-          "hysteresis_on": "Heating restart delta",
-          "hysteresis_off": "Heating stop delta",
-          "max_on_percent": "Maximum heating power (0.0–1.0)",
-          "min_on_percent": "Minimum idle/cooling power (0.0–1.0)"
+          "hysteresis_on": "Activation delta",
+          "hysteresis_off": "Deactivation delta",
+          "max_on_percent": "Active power (0.0–1.0)",
+          "min_on_percent": "Inactive power (0.0–1.0)"
         }
       }
     }
